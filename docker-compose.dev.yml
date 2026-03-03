@@ -1,0 +1,82 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: fitness-db-dev
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: fitness_dev
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - postgres_dev_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - fitness-network
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.dev
+    container_name: fitness-backend-dev
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      NODE_ENV: development
+      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/fitness_dev?schema=public
+      JWT_ACCESS_SECRET: dev_access_secret_change_in_production_32_chars
+      JWT_REFRESH_SECRET: dev_refresh_secret_change_in_production_32_chars
+      FRONTEND_URL: http://localhost:3000
+      SMTP_HOST: smtp.gmail.com
+      SMTP_PORT: 587
+      SMTP_USER: test@example.com
+      SMTP_PASSWORD: test_password
+      SMTP_FROM: noreply@fitness.com
+      GEMINI_API_KEY: AIzaSyBW7gS1Cm2eFaVU3flhoF3ciAIIxpYfxhg
+      GEMINI_MODEL: gemini-2.5-flash
+    ports:
+      - "5001:5000"
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+      - /app/dist
+    command: npm run dev
+    networks:
+      - fitness-network
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.dev
+    container_name: fitness-frontend-dev
+    restart: unless-stopped
+    depends_on:
+      - backend
+    environment:
+      VITE_API_URL: http://localhost:5001/api/v1
+      VITE_WS_URL: http://localhost:5001
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    command: npm run dev
+    networks:
+      - fitness-network
+
+volumes:
+  postgres_dev_data:
+    driver: local
+
+networks:
+  fitness-network:
+    driver: bridge

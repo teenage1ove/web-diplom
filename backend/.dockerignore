@@ -1,0 +1,17 @@
+node_modules
+dist
+.env
+.env.*
+!.env.example
+npm-debug.log
+yarn-error.log
+.git
+.gitignore
+README.md
+tests
+*.test.ts
+jest.config.js
+.eslintrc.json
+.prettierrc
+coverage
+logs

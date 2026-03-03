@@ -1,0 +1,40 @@
+{
+  "name": "fitness-platform",
+  "version": "1.0.0",
+  "description": "Fitness Platform with AI recommendations and online trainer consultations",
+  "private": true,
+  "scripts": {
+    "setup": "bash setup.sh",
+    "dev": "docker-compose -f docker-compose.dev.yml up",
+    "dev:build": "docker-compose -f docker-compose.dev.yml up --build",
+    "dev:down": "docker-compose -f docker-compose.dev.yml down",
+    "start": "docker-compose up -d",
+    "start:build": "docker-compose up -d --build",
+    "stop": "docker-compose down",
+    "stop:clean": "docker-compose down -v",
+    "logs": "docker-compose logs -f",
+    "logs:backend": "docker-compose logs -f backend",
+    "logs:frontend": "docker-compose logs -f frontend",
+    "logs:db": "docker-compose logs -f postgres",
+    "migrate": "cd backend && npm run migrate:dev",
+    "migrate:deploy": "cd backend && npm run migrate:deploy",
+    "seed": "cd backend && npm run seed",
+    "db:studio": "cd backend && npm run prisma:studio",
+    "test": "npm run test:backend && npm run test:frontend",
+    "test:backend": "cd backend && npm test",
+    "test:frontend": "cd frontend && npm test",
+    "lint": "npm run lint:backend && npm run lint:frontend",
+    "lint:backend": "cd backend && npm run lint",
+    "lint:frontend": "cd frontend && npm run lint"
+  },
+  "keywords": [
+    "fitness",
+    "health",
+    "ai",
+    "wellness",
+    "trainer",
+    "workout"
+  ],
+  "author": "",
+  "license": "MIT"
+}
